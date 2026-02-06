@@ -55,6 +55,9 @@ jobs:
     name: Build, Sign & Push Docker Image
     needs: code-quality
     runs-on: ubuntu-latest
+    permissions:
+      contents: read      
+      security-events: write
     
     steps:
     - name: Checkout code
@@ -108,7 +111,7 @@ jobs:
         severity: 'CRITICAL,HIGH'
 
     - name: Upload Trivy results
-      uses: github/codeql-action/upload-sarif@v2
+      uses: github/codeql-action/upload-sarif@v3
       if: always()
       with:
         sarif_file: 'trivy-results.sarif'
@@ -163,7 +166,7 @@ jobs:
       run: |
         kubectl apply -f k8s/02-configmaps.yaml -n ${{ env.KUBE_NAMESPACE }}
         kubectl apply -f k8s/06-eureka.yaml -n ${{ env.KUBE_NAMESPACE }}
-        
+
         kubectl set image deployment/eureka \
           eureka=${{ env.DOCKER_IMAGE }}:latest \
           -n ${{ env.KUBE_NAMESPACE }}
