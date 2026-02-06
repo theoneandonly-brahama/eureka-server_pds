@@ -123,9 +123,10 @@ jobs:
       env:
         COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
         COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
+        TAGS: ${{ steps.meta.outputs.tags }}
       run: |
         echo "$COSIGN_PRIVATE_KEY" > cosign.key
-        for tag in ${{ steps.meta.outputs.tags }}; do
+        for tag in $TAGS; do
           echo "Signing $tag..."
           cosign sign --key cosign.key --yes $tag
         done
